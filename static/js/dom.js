@@ -12,11 +12,25 @@ let dom = {
         let planets = ObjectData.results;
         //for each entry create a row filled with data
         planets.forEach(planet => {
+            //select target row
             let row = dom.createRowContainer();
+            //enter data for each column
             dom.tableClasses.forEach(colName => {
+                //for each column name(selected by class name in target row)
                 let targetCol = row.querySelector('.'+colName);
-                targetCol.innerHTML = planet[colName];
-                contentTable.appendChild(row);
+                //if target column is residents display button, or text info
+                if(colName == 'residents'){
+                    if(planet.residents.length > 0){
+                        let btn = document.createElement('button')
+                        btn.innerText = planet.residents.length +' resident(s)';
+                        targetCol.appendChild(btn);}
+                    else{
+                        targetCol.innerText = 'No known residents'
+                    }
+                //other data display normal
+                }else{
+                targetCol.innerText = planet[colName];
+                contentTable.appendChild(row);}
             });
         })
     },
