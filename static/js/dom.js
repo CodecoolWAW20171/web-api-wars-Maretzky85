@@ -25,7 +25,9 @@ let dom = {
                 if(colName == 'residents'){
                     if(planet.residents.length > 0){
                         let btn = document.createElement('button')
+                        btn.classList.add('btn')
                         btn.innerText = planet.residents.length +' resident(s)';
+                        btn.dataset.data = planet.residents;
                         targetCol.appendChild(btn);}
                     else{
                         targetCol.innerText = 'No known residents'
@@ -39,11 +41,17 @@ let dom = {
     },
     createButtons: function(prevObject, nextObject){
         let buttons = document.createElement('div');
+        buttons.classList.add('navigate');
         let prev = document.createElement('button');
         prev.classList.add('previousButton');
+        prev.classList.add('btn');
+        //prev.classList.add('btn-lg');
+        prev.classList.add('btn-primary');
         prev.innerText = "previous";
+        prev.classList.add('disabled');
         prev.dataset.link = prevObject;
         if(prevObject != null){
+        prev.classList.remove('disabled');
         prev.addEventListener('click', function(e){
             dataManager.getData(this.dataset.link, dom.showDataInTable);
         });
@@ -52,9 +60,14 @@ let dom = {
 
         let next = document.createElement('button');
         next.classList.add('nextButton');
+        next.classList.add('btn');
+        //next.classList.add('btn-lg');
+        next.classList.add('btn-primary');
+        next.classList.add('disabled');
         next.innerText = "Next";
         next.dataset.link = nextObject;
         if(nextObject != null){
+            next.classList.remove('disabled');
             next.addEventListener('click', function(e){
                 dataManager.getData(this.dataset.link, dom.showDataInTable);
             });
@@ -87,6 +100,7 @@ let dom = {
         if(h==false){
             let vote = document.createElement('div');
             let btn = document.createElement('button')
+            btn.classList.add('btn')
             vote.classList.add('vote');
             vote.classList.add('col');
             btn.innerText = 'Vote';
