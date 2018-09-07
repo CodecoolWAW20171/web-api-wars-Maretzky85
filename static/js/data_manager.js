@@ -5,7 +5,7 @@ let dataManager = {
         xhttp.send();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-            callback(JSON.parse(xhttp.responseText))
+                callback(JSON.parse(xhttp.responseText))
             }
         };
     },

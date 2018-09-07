@@ -36,9 +36,16 @@ let dom = {
                         let btn = document.createElement('button');
                         btn.classList.add('btn');
                         btn.classList.add('btn-outline-info');
+                        btn.dataset.toggle = 'modal';
+                        btn.dataset.target = "#exampleModalLong";
                         btn.dataset.data = JSON.stringify(planet.residents);
                         btn.innerText = planet.residents.length +' resident(s)';
                         btn.addEventListener('click', function(e){
+                            let name = e.target.parentNode.parentNode.firstChild.innerHTML;
+                            let modalTitle = document.getElementById('ModalTitle');
+                            modalTitle.innerHTML = "Residents of "+name;
+                            let modalBody = document.getElementById('modalBody');
+                            modalBody.innerHTML = 'Loading data...';
                             console.log(JSON.parse(btn.dataset.data))
                         })
                         targetCol.appendChild(btn);}
@@ -67,8 +74,8 @@ let dom = {
             prev.classList.add('btn-primary');
             prev.classList.remove('disabled');
             prev.addEventListener('click', function(e){
-            dataManager.getData(this.dataset.link, dom.showDataInTable);
-        });
+                dataManager.getData(this.dataset.link, dom.showDataInTable);
+            });
         };
         buttons.appendChild(prev);
 
