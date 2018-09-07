@@ -56,8 +56,9 @@ let dom = {
         prev.innerText = "Previous";
         prev.dataset.link = prevObject;
         if(prevObject != null){
-        prev.classList.remove('disabled');
-        prev.addEventListener('click', function(e){
+            prev.classList.add('btn-primary');
+            prev.classList.remove('disabled');
+            prev.addEventListener('click', function(e){
             dataManager.getData(this.dataset.link, dom.showDataInTable);
         });
         };
@@ -70,6 +71,7 @@ let dom = {
         next.innerText = "Next";
         next.dataset.link = nextObject;
         if(nextObject != null){
+            next.classList.add('btn-primary');
             next.classList.remove('disabled');
             next.addEventListener('click', function(e){
                 dataManager.getData(this.dataset.link, dom.showDataInTable);
