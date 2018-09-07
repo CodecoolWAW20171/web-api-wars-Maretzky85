@@ -12,6 +12,7 @@ let dom = {
         let planets = ObjectData.results;
         //for each entry create a row filled with data
         planets.forEach(planet => {
+            planet = dataManager.planetDataFormatter(JSON.stringify(planet));
             //select target row
             let row = dom.createRowContainer();
             //enter data for each column
