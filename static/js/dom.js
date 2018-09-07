@@ -2,20 +2,25 @@ let dom = {
     tableClasses: ['name', 'diameter', 'climate', 'terrain', 'surface_water', 'population', 'residents'],
     tableFullNames: ['Name', 'Diameter', 'Climate', 'Terrain', 'Surface Water Percentage', 'Population', 'Residents'],
     showDataInTable: function (ObjectData) {
-        //clear present content 
         let contentTable = document.getElementById('content');
+        //clear present content 
         contentTable.innerHTML = '';
-        //create prev/next buttons
+        
+        //create and append prev/next buttons
         let buttonsDiv = dom.createButtons(ObjectData.previous, ObjectData.next);
         contentTable.appendChild(buttonsDiv);
+        
         //create table element
         let table = document.createElement('table');
         table.classList.add('table')
-        //create headers in table
+        
+        //create headers and append to table
         let header = dom.createPlanetTableHeader();
         table.appendChild(header);
+        
         //contentTable.appendChild(table);
         let planets = ObjectData.results;
+        
         //for each entry create a row filled with data
         planets.forEach(planet => {
             planet = dataManager.planetDataFormatter(JSON.stringify(planet));
@@ -30,6 +35,7 @@ let dom = {
                     if(planet.residents.length > 0){
                         let btn = document.createElement('button');
                         btn.classList.add('btn');
+                        btn.classList.add('btn-outline-info');
                         btn.dataset.data = JSON.stringify(planet.residents);
                         btn.innerText = planet.residents.length +' resident(s)';
                         btn.addEventListener('click', function(e){
@@ -46,6 +52,8 @@ let dom = {
             });contentTable.appendChild(table);
         })
     },
+
+
     createButtons: function(prevObject, nextObject){
         let buttons = document.createElement('div');
         buttons.classList.add('navigate');
