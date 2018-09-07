@@ -14,7 +14,8 @@ let dataManager = {
         let classNames = dom.tableClasses;
         classNames.forEach(cName => {
             if(cName == 'diameter'){
-                planet[cName] = planet[cName].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+' km'
+                if(Number.isInteger(parseInt(planet[cName])) == true){
+                planet[cName] = planet[cName].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+' km'}
             }else if(cName == 'surface_water'){
                 if(Number.isInteger(parseInt(planet[cName])) == true)
                 {planet.surface_water = planet.surface_water + "%";}

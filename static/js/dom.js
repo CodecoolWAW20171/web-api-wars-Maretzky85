@@ -8,15 +8,19 @@ let dom = {
         //create prev/next buttons
         let buttonsDiv = dom.createButtons(ObjectData.previous, ObjectData.next);
         contentTable.appendChild(buttonsDiv);
+        //create table element
+        let table = document.createElement('table');
+        table.classList.add('table')
         //create headers in table
-        let header = dom.createRowContainer('headers');
-        contentTable.appendChild(header);
+        let header = dom.createPlanetTableHeader();
+        table.appendChild(header);
+        //contentTable.appendChild(table);
         let planets = ObjectData.results;
         //for each entry create a row filled with data
         planets.forEach(planet => {
             planet = dataManager.planetDataFormatter(JSON.stringify(planet));
             //select target row
-            let row = dom.createRowContainer();
+            let row = dom.createPlanetTableRow();
             //enter data for each column
             dom.tableClasses.forEach(colName => {
                 //for each column name(selected by class name in target row)
@@ -24,10 +28,13 @@ let dom = {
                 //if target column is residents display button, or text info
                 if(colName == 'residents'){
                     if(planet.residents.length > 0){
-                        let btn = document.createElement('button')
-                        btn.classList.add('btn')
+                        let btn = document.createElement('button');
+                        btn.classList.add('btn');
+                        btn.dataset.data = JSON.stringify(planet.residents);
                         btn.innerText = planet.residents.length +' resident(s)';
-                        btn.dataset.data = planet.residents;
+                        btn.addEventListener('click', function(e){
+                            console.log(JSON.parse(btn.dataset.data))
+                        })
                         targetCol.appendChild(btn);}
                     else{
                         targetCol.innerText = 'No known residents'
@@ -35,8 +42,8 @@ let dom = {
                 //other data display normal
                 }else{
                 targetCol.innerText = planet[colName];
-                contentTable.appendChild(row);}
-            });
+                table.appendChild(row);}
+            });contentTable.appendChild(table);
         })
     },
     createButtons: function(prevObject, nextObject){
@@ -45,10 +52,8 @@ let dom = {
         let prev = document.createElement('button');
         prev.classList.add('previousButton');
         prev.classList.add('btn');
-        //prev.classList.add('btn-lg');
-        prev.classList.add('btn-primary');
-        prev.innerText = "previous";
         prev.classList.add('disabled');
+        prev.innerText = "Previous";
         prev.dataset.link = prevObject;
         if(prevObject != null){
         prev.classList.remove('disabled');
@@ -61,8 +66,6 @@ let dom = {
         let next = document.createElement('button');
         next.classList.add('nextButton');
         next.classList.add('btn');
-        //next.classList.add('btn-lg');
-        next.classList.add('btn-primary');
         next.classList.add('disabled');
         next.innerText = "Next";
         next.dataset.link = nextObject;
@@ -75,40 +78,33 @@ let dom = {
         buttons.appendChild(next)
         return buttons
     },
-
-    createRowContainer: function(h=false) {
-        let rowNames = dom.tableClasses.slice(0);
-        if(h=='headers'){
-            rowNames = dom.tableFullNames.slice(0);
-            rowNames.push('Vote');
-        };
-        //create row div
-        let row = document.createElement('div');
-        //class to div
-        row.classList.add('row');
-        //add individual class to col and append to main row
-        rowNames.forEach(name => {
-            let col = document.createElement('div');
-            col.classList.add('col');
-            if(h=='headers'){
-                col.innerText = name;
-            }else {
-                col.classList.add(name);
-            }
-            row.appendChild(col);
+    createPlanetTableHeader: function(){
+        let header = document.createElement('thead');
+        let headerRow = document.createElement('tr')
+        let colNames = dom.tableFullNames.slice(0);
+        //colNames.push('Vote');
+        colNames.forEach(name => {
+            let col = document.createElement('th');
+            col.innerText = name;
+            headerRow.appendChild(col);
         });
-        if(h==false){
-            let vote = document.createElement('div');
-            let btn = document.createElement('button')
-            btn.classList.add('btn')
-            vote.classList.add('vote');
-            vote.classList.add('col');
-            btn.innerText = 'Vote';
-            vote.appendChild(btn);
-            //vote.innerText = 'vote';
-            row.appendChild(vote);
-        }
-        return row
+        header.appendChild(headerRow);
+        return header
     },
-    
+    createPlanetTableRow: function() {
+        let colNames = dom.tableClasses.slice(0);
+        let row = document.createElement('tr');
+        colNames.forEach(name => {
+            let col = document.createElement('td');
+            col.classList.add(name);
+            row.appendChild(col);
+        })
+        if(0==1){let btnTd = document.createElement('td');
+        let btn = document.createElement('button');
+        btn.classList.add('btn');
+        btn.innerText = "vote";
+        btnTd.appendChild(btn);
+        row.appendChild(btnTd);}
+        return row
+        }
 }
