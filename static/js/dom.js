@@ -5,10 +5,12 @@ let dom = {
         //clear present content 
         let contentTable = document.getElementById('content');
         contentTable.innerHTML = '';
+        //create prev/next buttons
+        let buttonsDiv = dom.createButtons(ObjectData.previous, ObjectData.next);
+        contentTable.appendChild(buttonsDiv);
         //create headers in table
         let header = dom.createRowContainer('headers');
-        contentTable.appendChild(header)
-        
+        contentTable.appendChild(header);
         let planets = ObjectData.results;
         //for each entry create a row filled with data
         planets.forEach(planet => {
@@ -35,14 +37,40 @@ let dom = {
             });
         })
     },
+    createButtons: function(prevObject, nextObject){
+        let buttons = document.createElement('div');
+        let prev = document.createElement('button');
+        prev.classList.add('previousButton');
+        prev.innerText = "previous";
+        prev.dataset.link = prevObject;
+        if(prevObject != null){
+        prev.addEventListener('click', function(e){
+            dataManager.getData(this.dataset.link, dom.showDataInTable);
+        });
+        };
+        buttons.appendChild(prev);
+
+        let next = document.createElement('button');
+        next.classList.add('nextButton');
+        next.innerText = "Next";
+        next.dataset.link = nextObject;
+        if(nextObject != null){
+            next.addEventListener('click', function(e){
+                dataManager.getData(this.dataset.link, dom.showDataInTable);
+            });
+        };
+        buttons.appendChild(next)
+        return buttons
+    },
+
     createRowContainer: function(h=false) {
-        let rowNames = dom.tableClasses;
+        let rowNames = dom.tableClasses.slice(0);
         if(h=='headers'){
-            rowNames = dom.tableFullNames;
+            rowNames = dom.tableFullNames.slice(0);
             rowNames.push('Vote');
         };
         //create row div
-        const row = document.createElement('div');
+        let row = document.createElement('div');
         //class to div
         row.classList.add('row');
         //add individual class to col and append to main row
