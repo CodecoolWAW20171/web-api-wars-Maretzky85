@@ -1,5 +1,7 @@
 let xhttp = new XMLHttpRequest();
 let dataManager = {
+    residentDetails = ['name','height', 'mass', 'skin color', 'hair color', 'eye color', 'birth year', 'gender'],
+
     getData: function(request, callback){
         xhttp.open("GET", request, true);
         xhttp.send();

@@ -14,6 +14,7 @@ let dom = {
         let table = document.createElement('table');
         table.classList.add('table')
         
+        
         //create headers and append to table
         let header = dom.createPlanetTableHeader();
         table.appendChild(header);
@@ -74,10 +75,19 @@ let dom = {
             prev.classList.add('btn-primary');
             prev.classList.remove('disabled');
             prev.addEventListener('click', function(e){
-                dataManager.getData(this.dataset.link, dom.showDataInTable);
+                let messageBox = document.getElementById('msgBox');
+                if(messageBox.children.length < 1){
+                let loadingSign = document.createElement('h4');
+                loadingSign.innerHTML = 'Please wait, loading data...';
+                messageBox.appendChild(loadingSign);
+                dataManager.getData(this.dataset.link, dom.showDataInTable);}
             });
         };
         buttons.appendChild(prev);
+
+        let msgBox = document.createElement('div');
+        msgBox.id = 'msgBox';
+        buttons.appendChild(msgBox);
 
         let next = document.createElement('button');
         next.classList.add('nextButton');
@@ -89,7 +99,12 @@ let dom = {
             next.classList.add('btn-primary');
             next.classList.remove('disabled');
             next.addEventListener('click', function(e){
-                dataManager.getData(this.dataset.link, dom.showDataInTable);
+                let messageBox = document.getElementById('msgBox');
+                if(messageBox.children.length < 1){
+                let loadingSign = document.createElement('h4');
+                loadingSign.innerHTML = 'Please wait, loading data...';
+                messageBox.appendChild(loadingSign);
+                dataManager.getData(this.dataset.link, dom.showDataInTable);}
             });
         };
         buttons.appendChild(next)
@@ -97,6 +112,7 @@ let dom = {
     },
     createPlanetTableHeader: function(){
         let header = document.createElement('thead');
+        header.classList.add('thead-dark')
         let headerRow = document.createElement('tr')
         let colNames = dom.tableFullNames.slice(0);
         //colNames.push('Vote');
