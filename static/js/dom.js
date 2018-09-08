@@ -83,9 +83,9 @@ let dom = {
         let modalMsgBox = document.getElementById('modalMsgBox');
         modalMsgBox.innerHTML = "Loaded "+ loadedItems + " of " + itemsToLoad + " residents";
         if(loadedItems == itemsToLoad){
-            setTimeout(() => {modalMsgBox.innerHTML = "All data loaded";}, 500);
-            setTimeout(() => {dom.fadeOut('modalMsgBox');}, 1500);
-            setTimeout(() => {dom.slowClose('modalMsgBox')},1500);
+            setTimeout(() => {modalMsgBox.innerHTML = "All data loaded";}, 1000);
+            setTimeout(() => {dom.fadeOut('modalMsgBox')}, 2000);
+            setTimeout(() => {dom.slowClose('modalMsgBox')},2200);
         }
         let modalTableBody = document.getElementById('modalTableBody');
         let row = dom.createPlanetTableRow(dataManager.residentDetails);
@@ -140,6 +140,8 @@ let dom = {
             prev.classList.add('btn-primary');
             prev.classList.remove('disabled');
             prev.addEventListener('click', function(e){
+                this.classList.add('disabled');
+                document.querySelector('.nextButton').classList.add('disabled');
                 let messageBox = document.getElementById('msgBox');
                 if(messageBox.children.length < 1){
                 let loadingSign = document.createElement('h4');
@@ -164,6 +166,8 @@ let dom = {
             next.classList.add('btn-primary');
             next.classList.remove('disabled');
             next.addEventListener('click', function(e){
+                this.classList.add('disabled');
+                document.querySelector('.previousButton').classList.add('disabled');
                 let messageBox = document.getElementById('msgBox');
                 if(messageBox.children.length < 1){
                 let loadingSign = document.createElement('h4');
