@@ -70,7 +70,9 @@ let dom = {
     drawTableInModal: function(){
         let modalBody = document.getElementById('modalBody');
         let modalTable = document.createElement('table');
+        modalTable.id = 'modalTable';
         modalTable.classList.add('table');
+        modalTable.style.opacity = 0;
 
         let tableHeader = dataManager.createTableHeader(dataManager.residentDetails)
         modalTable.appendChild(tableHeader);
@@ -84,7 +86,8 @@ let dom = {
 
     showContentInModal: function(contentToAdd){
         if(document.getElementById('modalBody').children.length < 1){
-            dom.drawTableInModal()
+            dom.drawTableInModal();
+            dom.fadeIn('modalTable');
         }
         let modalMsgBox = document.getElementById('modalMsgBox');
         modalMsgBox.innerHTML = "Loaded "+ loadedItems + " of " + itemsToLoad + " residents";
@@ -138,6 +141,23 @@ let dom = {
             }
         }, 25);
     },
+
+    fadeIn: function(fadeTarget) {
+        var fadeTarget = document.getElementById(fadeTarget);
+        var fadeEffect = setInterval(function () {
+            if (!fadeTarget.style.opacity) {
+                console.log('opacity set to 0')
+                fadeTarget.style.opacity = 0;
+            }
+            if (fadeTarget.style.opacity < 1) {
+                let opacity = parseFloat(fadeTarget.style.opacity)
+                fadeTarget.style.opacity = (0.1 + opacity);
+            } else {
+                clearInterval(fadeEffect);
+            }
+        }, 25);
+    },
+
     showErrorMsg: function(){
         try {
             msgTarget = document.getElementById('initialWaitBox');
