@@ -1,6 +1,9 @@
 let xhttp = new XMLHttpRequest();
+let loadingState = 0;
+let loadedItems = 0;
+let requestNr = '';
 let dataManager = {
-    residentDetails = ['name','height', 'mass', 'skin color', 'hair color', 'eye color', 'birth year', 'gender'],
+    residentDetails: ['name','height', 'mass', 'skin color', 'hair color', 'eye color', 'birth year', 'gender'],
 
     getData: function(request, callback){
         xhttp.open("GET", request, true);
@@ -28,5 +31,33 @@ let dataManager = {
             }
         })
         return planet
+    },
+
+    loadArrayData: function(array, callback, checkParameter){
+        if(requestNr != checkParameter){
+            return;
+        }
+        let itemsToLoad = array.length;
+        if(loadedItems < itemsToLoad){
+            if(loadingState == 0){
+                xhttp.open("GET", array[loadedItems], true);
+                xhttp.send();
+            }
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    loadingState = 0;
+                    loadedItems++;
+                    if(requestNr == checkParameter){
+                        callback(JSON.parse(xhttp.responseText))
+                    }
+                }
+            };
+            loadingState = 1;
+            setTimeout(() => {dataManager.loadArrayData(array, callback, checkParameter)}, 300);
+        }else{
+        loadingState = 0;
+        loadedItems = 0;
+        return
+        }
     }
 }

@@ -16,7 +16,7 @@ let dom = {
         
         
         //create headers and append to table
-        let header = dom.createPlanetTableHeader();
+        let header = dom.createPlanetTableHeader(dom.tableFullNames);
         table.appendChild(header);
         
         //contentTable.appendChild(table);
@@ -42,12 +42,16 @@ let dom = {
                         btn.dataset.data = JSON.stringify(planet.residents);
                         btn.innerText = planet.residents.length +' resident(s)';
                         btn.addEventListener('click', function(e){
-                            let name = e.target.parentNode.parentNode.firstChild.innerHTML;
+                            let planetName = e.target.parentNode.parentNode.firstChild.innerHTML;
+                            requestNr = planetName;
+                            loadedItems = 0;
                             let modalTitle = document.getElementById('ModalTitle');
-                            modalTitle.innerHTML = "Residents of "+name;
+                            modalTitle.innerHTML = "Residents of "+planetName;
                             let modalBody = document.getElementById('modalBody');
                             modalBody.innerHTML = 'Loading data...';
-                            console.log(JSON.parse(btn.dataset.data))
+                            modalBody.appendChild(dom.createPlanetTableHeader(dataManager.residentDetails));
+                            dataManager.loadArrayData(JSON.parse(btn.dataset.data), dom.showContentInModal, planetName);
+                            //console.log(JSON.parse(btn.dataset.data))
                         })
                         targetCol.appendChild(btn);}
                     else{
@@ -61,6 +65,9 @@ let dom = {
         })
     },
 
+    showContentInModal: function(contentToAdd){
+        console.log(contentToAdd);
+    },
 
     createButtons: function(prevObject, nextObject){
         let buttons = document.createElement('div');
@@ -103,6 +110,7 @@ let dom = {
                 if(messageBox.children.length < 1){
                 let loadingSign = document.createElement('h4');
                 loadingSign.innerHTML = 'Please wait, loading data...';
+                messageBox.appendChild(dom.createPlanetTableHeader(dataManager.residentDetails));
                 messageBox.appendChild(loadingSign);
                 dataManager.getData(this.dataset.link, dom.showDataInTable);}
             });
@@ -110,11 +118,11 @@ let dom = {
         buttons.appendChild(next)
         return buttons
     },
-    createPlanetTableHeader: function(){
+    createPlanetTableHeader: function(headerArray){
         let header = document.createElement('thead');
         header.classList.add('thead-dark')
         let headerRow = document.createElement('tr')
-        let colNames = dom.tableFullNames.slice(0);
+        let colNames = headerArray;
         //colNames.push('Vote');
         colNames.forEach(name => {
             let col = document.createElement('th');
@@ -123,6 +131,7 @@ let dom = {
         });
         header.appendChild(headerRow);
         return header
+
     },
     createPlanetTableRow: function() {
         let colNames = dom.tableClasses.slice(0);
