@@ -5,46 +5,41 @@ let dom = {
         contentTable.innerHTML = '';
         
         //create and append prev/next buttons
-        let buttonsDiv = dom.createButtons(ObjectData.previous, ObjectData.next);
+        let buttonsDiv = dataManager.createButtons(ObjectData.previous, ObjectData.next);
         contentTable.appendChild(buttonsDiv);
         
         //create table element
         let table = document.createElement('table');
         table.classList.add('table')
-        
+        table.id = 'planetTable'
         
         //create headers and append to table
-        let header = dom.createPlanetTableHeader(dataManager.tableFullNames);
+        let header = dataManager.createTableHeader(dataManager.tableFullNames);
         table.appendChild(header);
         
-        //contentTable.appendChild(table);
+        contentTable.appendChild(table);
+        //extract planet objects from results
         let planets = ObjectData.results;
         
         //for each entry create a row filled with data
         planets.forEach(planet => {
+            let planetTable = document.getElementById('planetTable');
+            //format data to display
             planet = dataManager.planetDataFormatter(JSON.stringify(planet));
-            //select target row
-            let row = dom.createPlanetTableRow(dataManager.tableClasses);
+            
+            //create data-row
+            let row = dataManager.createTableRow(dataManager.tableClasses);
+            
             //enter data for each column
             dataManager.tableClasses.forEach(colName => {
                 //for each column name(selected by class name in target row)
+                
                 let targetCol = row.querySelector('.'+colName);
                 //if target column is residents display button, or text info
                 if(colName == 'residents'){
                     if(planet.residents.length > 0){
-                        let btn = document.createElement('button');
-                        btn.classList.add('btn');
-                        btn.classList.add('btn-outline-info');
-                        btn.dataset.toggle = 'modal';
-                        btn.dataset.target = "#exampleModalLong";
-                        btn.dataset.data = JSON.stringify(planet.residents);
-                        btn.innerText = planet.residents.length +' resident(s)';
-                        btn.addEventListener('click', function(e){
-                            let planetName = e.target.parentNode.parentNode.firstChild.innerHTML;
-                            dom.prepareModalWindow(planetName),
-                            dataManager.loadArrayData(JSON.parse(btn.dataset.data), dom.showContentInModal, requestNr);
-                            
-                        })
+                        //create resident button for planet
+                        let btn = dataManager.createResidentButton(planet);
                         targetCol.appendChild(btn);}
                     else{
                         targetCol.innerText = 'No known residents'
@@ -52,43 +47,55 @@ let dom = {
                 //other data display normal
                 }else{
                 targetCol.innerText = planet[colName];
-                table.appendChild(row);}
-            });contentTable.appendChild(table);
+
+                //append row to table
+                planetTable.appendChild(row);}
+            });
         })
     },
     prepareModalWindow: function(planetName){
-        requestNr++;
-        loadedItems = 0;
         let modalTitle = document.getElementById('ModalTitle');
         modalTitle.innerHTML = "Residents of "+planetName;
+        
         let modalMsgBox = document.createElement('div');
         modalMsgBox.id = 'modalMsgBox';
         modalMsgBox.innerHTML = 'Loading data...';
+
         modalTitle.appendChild(modalMsgBox);
+        
         let modalBody = document.getElementById('modalBody');
         modalBody.innerHTML = '';
+        
         let modalTable = document.createElement('table');
         modalTable.classList.add('table');
-        modalTable.appendChild(dom.createPlanetTableHeader(dataManager.residentDetails));
+
+        let tableHeader = dataManager.createTableHeader(dataManager.residentDetails)
+        modalTable.appendChild(tableHeader);
+        
         let modalTableBody = document.createElement('tbody');
         modalTableBody.id = 'modalTableBody';
+        
         modalTable.appendChild(modalTableBody);
         modalBody.appendChild(modalTable);
     },
 
     showContentInModal: function(contentToAdd){
-        //console.log(contentToAdd);
         let modalMsgBox = document.getElementById('modalMsgBox');
         modalMsgBox.innerHTML = "Loaded "+ loadedItems + " of " + itemsToLoad + " residents";
+        
         if(loadedItems == itemsToLoad){
             setTimeout(() => {modalMsgBox.innerHTML = "All data loaded";}, 1000);
             setTimeout(() => {dom.fadeOut('modalMsgBox')}, 2000);
             setTimeout(() => {dom.slowClose('modalMsgBox')},2200);
-        }
+        };
+
         let modalTableBody = document.getElementById('modalTableBody');
-        let row = dom.createPlanetTableRow(dataManager.residentDetails);
+        
+        let row = dataManager.createTableRow(dataManager.residentDetails);
+        
         dataManager.residentDetails.forEach(className => {
             className = className.toLocaleLowerCase().replace(' ',"_")
+            
             let targetCol = row.querySelector('.'+className);
             targetCol.innerText = contentToAdd[className]
         });
@@ -124,89 +131,23 @@ let dom = {
             }
         }, 25);
     },
-
-    createButtons: function(prevObject, nextObject){
-        let buttons = document.createElement('div');
-        buttons.classList.add('navigate');
-        let prev = document.createElement('button');
-        prev.classList.add('previousButton');
-        prev.classList.add('btn');
-        prev.classList.add('disabled');
-        prev.innerText = "Previous";
-        prev.dataset.link = prevObject;
-        if(prevObject != null){
-            prev.classList.add('btn-primary');
-            prev.classList.remove('disabled');
-            prev.addEventListener('click', function(e){
-                this.classList.add('disabled');
-                document.querySelector('.nextButton').classList.add('disabled');
-                let messageBox = document.getElementById('msgBox');
-                if(messageBox.children.length < 1){
-                let loadingSign = document.createElement('h4');
-                loadingSign.innerHTML = 'Please wait, loading data...';
-                messageBox.appendChild(loadingSign);
-                dataManager.getData(this.dataset.link, dom.showDataInTable);}
-            });
-        };
-        buttons.appendChild(prev);
-
-        let msgBox = document.createElement('div');
-        msgBox.id = 'msgBox';
-        buttons.appendChild(msgBox);
-
-        let next = document.createElement('button');
-        next.classList.add('nextButton');
-        next.classList.add('btn');
-        next.classList.add('disabled');
-        next.innerText = "Next";
-        next.dataset.link = nextObject;
-        if(nextObject != null){
-            next.classList.add('btn-primary');
-            next.classList.remove('disabled');
-            next.addEventListener('click', function(e){
-                this.classList.add('disabled');
-                document.querySelector('.previousButton').classList.add('disabled');
-                let messageBox = document.getElementById('msgBox');
-                if(messageBox.children.length < 1){
-                let loadingSign = document.createElement('h4');
-                loadingSign.innerHTML = 'Please wait, loading data...';
-                messageBox.appendChild(loadingSign);
-                dataManager.getData(this.dataset.link, dom.showDataInTable);}
-            });
-        };
-        buttons.appendChild(next)
-        return buttons
-    },
-    createPlanetTableHeader: function(headerArray){
-        let header = document.createElement('thead');
-        header.classList.add('thead-dark')
-        let headerRow = document.createElement('tr')
-        let colNames = headerArray;
-        //colNames.push('Vote');
-        colNames.forEach(name => {
-            let col = document.createElement('th');
-            col.innerText = name;
-            headerRow.appendChild(col);
-        });
-        header.appendChild(headerRow);
-        return header
-
-    },
-    createPlanetTableRow: function(tableClassArray) {
-        let colNames = tableClassArray;
-        let row = document.createElement('tr');
-        colNames.forEach(name => {
-            name = name.toLowerCase().replace(' ','_');
-            let col = document.createElement('td');
-            col.classList.add(name);
-            row.appendChild(col);
-        })
-        if(0==1){let btnTd = document.createElement('td');
-        let btn = document.createElement('button');
-        btn.classList.add('btn');
-        btn.innerText = "vote";
-        btnTd.appendChild(btn);
-        row.appendChild(btnTd);}
-        return row
+    showErrorMsg: function(){
+        try {
+            msgTarget = document.getElementById('initialWaitBox');
+            msgTarget.style.color = 'red';
+            msgTarget.innerHTML = 'Something went wrong, please reload';  
+        } catch (TypeError) {
+            try {
+                let msgTarget = document.getElementById('msgBox')
+                msgTarget.innerHTML = 'Something went wrong, please reload';
+                msgTarget.style.color = 'red';
+                msgTarget = document.getElementById('modalMsgBox')
+                msgTarget.style.color = 'red';
+                msgTarget.innerHTML = 'Something went wrong, please reload';
+            } catch (TypeError) {
+                console.log('Other problem');
+                document.innerHTML = '<h1>Something went wrong, please reload</h1>'
+            }
         }
+    },
 }

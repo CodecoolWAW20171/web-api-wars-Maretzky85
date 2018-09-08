@@ -12,7 +12,7 @@ let dataManager = {
         try {
             let waitBox = document.getElementById('initialWaitBox');
             waitBox.innerHTML += '<br><br>Request sent, waiting for response'
-        } catch (err) {
+        } catch (TypeError) {
             
         }
         xhttp.open("GET", request, true);
@@ -22,23 +22,7 @@ let dataManager = {
                 callback(JSON.parse(xhttp.responseText))
             };
             if (this.readyState == 4 && this.status != 200){
-                try {
-                    msgTarget = document.getElementById('initialWaitBox');
-                    msgTarget.style.color = 'red';
-                    msgTarget.innerHTML = 'Something went wrong, please reload';  
-                } catch (TypeError) {
-                    try {
-                        let msgTarget = document.getElementById('msgBox')
-                        msgTarget.innerHTML = 'Something went wrong, please reload';
-                        msgTarget.style.color = 'red';
-                        msgTarget = document.getElementById('modalMsgBox')
-                        msgTarget.style.color = 'red';
-                        msgTarget.innerHTML = 'Something went wrong, please reload';
-                    } catch (TypeError) {
-                        console.log('Other problem');
-                        document.innerHTML = '<h1>Something went wrong, please reload</h1>'
-                    }
-                }
+                dom.showErrorMsg();
                 }
         };
     },
@@ -79,23 +63,7 @@ let dataManager = {
                         callback(JSON.parse(xhttp.responseText))
                     }
                 }if (this.readyState == 4 && this.status != 200){
-                    try {
-                        msgTarget = document.getElementById('initialWaitBox');
-                        msgTarget.style.color = 'red';
-                        msgTarget.innerHTML = 'Something went wrong, please reload';  
-                    } catch (TypeError) {
-                        try {
-                            let msgTarget = document.getElementById('msgBox')
-                            msgTarget.innerHTML = 'Something went wrong, please reload';
-                            msgTarget.style.color = 'red';
-                            msgTarget = document.getElementById('modalMsgBox')
-                            msgTarget.style.color = 'red';
-                            msgTarget.innerHTML = 'Something went wrong, please reload';
-                        } catch (TypeError) {
-                            console.log('Other problem');
-                            document.innerHTML = '<h1>Something went wrong, please reload</h1>'
-                        }
-                    }
+                    dom.showErrorMsg();
                     }
             };
             loadingState = 1;
@@ -105,5 +73,112 @@ let dataManager = {
         loadedItems = 0;
         return
         }
-    }
+    },
+
+    createButtons: function(prevLink, nextlink){
+        let buttons = document.createElement('div');
+        buttons.classList.add('navigate');
+
+        let prevButton = document.createElement('button');
+        prevButton.classList.add('previousButton');
+        prevButton.classList.add('btn');
+        prevButton.classList.add('disabled');
+        prevButton.innerText = "Previous";
+        prevButton.dataset.link = prevLink;
+
+        if(prevLink != null){
+            prevButton.classList.add('btn-primary');
+            prevButton.classList.remove('disabled');
+            prevButton.addEventListener('click', function(e){
+                dataManager.buttonEvent(this)
+            });
+        };
+        buttons.appendChild(prevButton);
+
+        let msgBox = document.createElement('div');
+        msgBox.id = 'msgBox';
+        buttons.appendChild(msgBox);
+
+        let next = document.createElement('button');
+        next.classList.add('nextButton');
+        next.classList.add('btn');
+        next.classList.add('disabled');
+        next.innerText = "Next";
+        next.dataset.link = nextlink;
+        
+        if(nextlink != null){
+            next.classList.add('btn-primary');
+            next.classList.remove('disabled');
+            next.addEventListener('click', function(e){
+                dataManager.buttonEvent(this)
+            });
+        };
+        buttons.appendChild(next)
+        return buttons
+    },
+
+    buttonEvent: function(targetButton){
+        document.querySelector('.nextButton').classList.add('disabled');
+        document.querySelector('.previousButton').classList.add('disabled');
+        //show loading msg
+        let messageBox = document.getElementById('msgBox');
+        if(messageBox.children.length < 1){
+            let loadingSign = document.createElement('h4');
+            loadingSign.innerHTML = 'Please wait, loading data...';
+            messageBox.appendChild(loadingSign);
+            dataManager.getData(targetButton.dataset.link, dom.showDataInTable);}
+    },
+
+    createTableHeader: function(headerArray){
+        let header = document.createElement('thead');
+        header.classList.add('thead-dark')
+        let headerRow = document.createElement('tr')
+        let colNames = headerArray;
+        //colNames.push('Vote');
+        colNames.forEach(name => {
+            let col = document.createElement('th');
+            col.innerText = name;
+            headerRow.appendChild(col);
+        });
+        header.appendChild(headerRow);
+        return header
+
+    },
+
+    createTableRow: function(tableClassArray) {
+        let colNames = tableClassArray;
+        let row = document.createElement('tr');
+        colNames.forEach(name => {
+            name = name.toLowerCase().replace(' ','_');
+            let col = document.createElement('td');
+            col.classList.add(name);
+            row.appendChild(col);
+        })
+        if(0==1){let btnTd = document.createElement('td');
+        let btn = document.createElement('button');
+        btn.classList.add('btn');
+        btn.innerText = "vote";
+        btnTd.appendChild(btn);
+        row.appendChild(btnTd);}
+        return row
+        },
+
+    createResidentButton: function(planet){
+        let btn = document.createElement('button');
+        btn.classList.add('btn');
+        btn.classList.add('btn-outline-info');
+        btn.dataset.toggle = 'modal';
+        btn.dataset.target = "#exampleModalLong";
+        btn.dataset.data = JSON.stringify(planet.residents);
+        btn.innerText = planet.residents.length +' resident(s)';
+        btn.addEventListener('click', function(e){
+            requestNr++;
+            loadedItems = 0;
+            let planetName = e.target.parentNode.parentNode.firstChild.innerHTML;
+            dom.prepareModalWindow(planetName),
+            dataManager.loadArrayData(JSON.parse(btn.dataset.data), dom.showContentInModal, requestNr);
+                            
+        })
+        return btn;
+    },
 }
