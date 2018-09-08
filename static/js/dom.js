@@ -65,7 +65,10 @@ let dom = {
         
         let modalBody = document.getElementById('modalBody');
         modalBody.innerHTML = '';
-        
+    },
+
+    drawTableInModal: function(){
+        let modalBody = document.getElementById('modalBody');
         let modalTable = document.createElement('table');
         modalTable.classList.add('table');
 
@@ -80,6 +83,9 @@ let dom = {
     },
 
     showContentInModal: function(contentToAdd){
+        if(document.getElementById('modalBody').children.length < 1){
+            dom.drawTableInModal()
+        }
         let modalMsgBox = document.getElementById('modalMsgBox');
         modalMsgBox.innerHTML = "Loaded "+ loadedItems + " of " + itemsToLoad + " residents";
         
@@ -99,6 +105,7 @@ let dom = {
             let targetCol = row.querySelector('.'+className);
             targetCol.innerText = contentToAdd[className]
         });
+        
         modalTableBody.appendChild(row);
     },
 
