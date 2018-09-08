@@ -1,9 +1,10 @@
 let xhttp = new XMLHttpRequest();
 let loadingState = 0;
 let loadedItems = 0;
-let requestNr = '';
+let requestNr = 0;
+let itemsToLoad = 0;
 let dataManager = {
-    residentDetails: ['name','height', 'mass', 'skin color', 'hair color', 'eye color', 'birth year', 'gender'],
+    residentDetails: ['Name','Height', 'Mass', 'Skin color', 'Hair color', 'Eye color', 'Birth year', 'Gender'],
 
     getData: function(request, callback){
         xhttp.open("GET", request, true);
@@ -37,7 +38,7 @@ let dataManager = {
         if(requestNr != checkParameter){
             return;
         }
-        let itemsToLoad = array.length;
+        itemsToLoad = array.length;
         if(loadedItems < itemsToLoad){
             if(loadingState == 0){
                 xhttp.open("GET", array[loadedItems], true);

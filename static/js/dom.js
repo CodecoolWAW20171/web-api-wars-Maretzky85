@@ -26,7 +26,7 @@ let dom = {
         planets.forEach(planet => {
             planet = dataManager.planetDataFormatter(JSON.stringify(planet));
             //select target row
-            let row = dom.createPlanetTableRow();
+            let row = dom.createPlanetTableRow(dom.tableClasses);
             //enter data for each column
             dom.tableClasses.forEach(colName => {
                 //for each column name(selected by class name in target row)
@@ -43,15 +43,9 @@ let dom = {
                         btn.innerText = planet.residents.length +' resident(s)';
                         btn.addEventListener('click', function(e){
                             let planetName = e.target.parentNode.parentNode.firstChild.innerHTML;
-                            requestNr = planetName;
-                            loadedItems = 0;
-                            let modalTitle = document.getElementById('ModalTitle');
-                            modalTitle.innerHTML = "Residents of "+planetName;
-                            let modalBody = document.getElementById('modalBody');
-                            modalBody.innerHTML = 'Loading data...';
-                            modalBody.appendChild(dom.createPlanetTableHeader(dataManager.residentDetails));
-                            dataManager.loadArrayData(JSON.parse(btn.dataset.data), dom.showContentInModal, planetName);
-                            //console.log(JSON.parse(btn.dataset.data))
+                            dom.prepareModalWindow(planetName),
+                            dataManager.loadArrayData(JSON.parse(btn.dataset.data), dom.showContentInModal, requestNr);
+                            
                         })
                         targetCol.appendChild(btn);}
                     else{
@@ -64,9 +58,73 @@ let dom = {
             });contentTable.appendChild(table);
         })
     },
+    prepareModalWindow: function(planetName){
+        requestNr++;
+        loadedItems = 0;
+        let modalTitle = document.getElementById('ModalTitle');
+        modalTitle.innerHTML = "Residents of "+planetName;
+        let modalMsgBox = document.createElement('div');
+        modalMsgBox.id = 'modalMsgBox';
+        modalMsgBox.innerHTML = 'Loading data...';
+        modalTitle.appendChild(modalMsgBox);
+        let modalBody = document.getElementById('modalBody');
+        modalBody.innerHTML = '';
+        let modalTable = document.createElement('table');
+        modalTable.classList.add('table');
+        modalTable.appendChild(dom.createPlanetTableHeader(dataManager.residentDetails));
+        let modalTableBody = document.createElement('tbody');
+        modalTableBody.id = 'modalTableBody';
+        modalTable.appendChild(modalTableBody);
+        modalBody.appendChild(modalTable);
+    },
 
     showContentInModal: function(contentToAdd){
-        console.log(contentToAdd);
+        //console.log(contentToAdd);
+        let modalMsgBox = document.getElementById('modalMsgBox');
+        modalMsgBox.innerHTML = "Loaded "+ loadedItems + " of " + itemsToLoad + " residents";
+        if(loadedItems == itemsToLoad){
+            setTimeout(() => {modalMsgBox.innerHTML = "All data loaded";}, 500);
+            setTimeout(() => {dom.fadeOut('modalMsgBox');}, 1500);
+            setTimeout(() => {dom.slowClose('modalMsgBox')},1500);
+        }
+        let modalTableBody = document.getElementById('modalTableBody');
+        let row = dom.createPlanetTableRow(dataManager.residentDetails);
+        dataManager.residentDetails.forEach(className => {
+            className = className.toLocaleLowerCase().replace(' ',"_")
+            let targetCol = row.querySelector('.'+className);
+            targetCol.innerText = contentToAdd[className]
+        });
+        modalTableBody.appendChild(row);
+    },
+
+    slowClose: function(target){
+        var fadeTarget = document.getElementById(target);
+        var fadeEffect = setInterval(function () {
+            if (!fadeTarget.style.height) {
+                fadeTarget.style.height = fadeTarget.clientHeight+'px';
+                fadeTarget.dataset.height = fadeTarget.clientHeight;
+            }
+            if (fadeTarget.dataset.height > 0) {
+                fadeTarget.dataset.height -= 2;
+                fadeTarget.style.height = fadeTarget.dataset.height + 'px';
+            } else {
+                clearInterval(fadeEffect);
+            }
+        }, 25);
+    },
+
+    fadeOut: function(fadeTarget) {
+        var fadeTarget = document.getElementById(fadeTarget);
+        var fadeEffect = setInterval(function () {
+            if (!fadeTarget.style.opacity) {
+                fadeTarget.style.opacity = 1;
+            }
+            if (fadeTarget.style.opacity > 0) {
+                fadeTarget.style.opacity -= 0.1;
+            } else {
+                clearInterval(fadeEffect);
+            }
+        }, 25);
     },
 
     createButtons: function(prevObject, nextObject){
@@ -110,7 +168,6 @@ let dom = {
                 if(messageBox.children.length < 1){
                 let loadingSign = document.createElement('h4');
                 loadingSign.innerHTML = 'Please wait, loading data...';
-                messageBox.appendChild(dom.createPlanetTableHeader(dataManager.residentDetails));
                 messageBox.appendChild(loadingSign);
                 dataManager.getData(this.dataset.link, dom.showDataInTable);}
             });
@@ -133,10 +190,11 @@ let dom = {
         return header
 
     },
-    createPlanetTableRow: function() {
-        let colNames = dom.tableClasses.slice(0);
+    createPlanetTableRow: function(tableClassArray) {
+        let colNames = tableClassArray;
         let row = document.createElement('tr');
         colNames.forEach(name => {
+            name = name.toLowerCase().replace(' ','_');
             let col = document.createElement('td');
             col.classList.add(name);
             row.appendChild(col);
