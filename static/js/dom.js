@@ -1,6 +1,4 @@
 let dom = {
-    tableClasses: ['name', 'diameter', 'climate', 'terrain', 'surface_water', 'population', 'residents'],
-    tableFullNames: ['Name', 'Diameter', 'Climate', 'Terrain', 'Surface Water Percentage', 'Population', 'Residents'],
     showDataInTable: function (ObjectData) {
         let contentTable = document.getElementById('content');
         //clear present content 
@@ -16,7 +14,7 @@ let dom = {
         
         
         //create headers and append to table
-        let header = dom.createPlanetTableHeader(dom.tableFullNames);
+        let header = dom.createPlanetTableHeader(dataManager.tableFullNames);
         table.appendChild(header);
         
         //contentTable.appendChild(table);
@@ -26,9 +24,9 @@ let dom = {
         planets.forEach(planet => {
             planet = dataManager.planetDataFormatter(JSON.stringify(planet));
             //select target row
-            let row = dom.createPlanetTableRow(dom.tableClasses);
+            let row = dom.createPlanetTableRow(dataManager.tableClasses);
             //enter data for each column
-            dom.tableClasses.forEach(colName => {
+            dataManager.tableClasses.forEach(colName => {
                 //for each column name(selected by class name in target row)
                 let targetCol = row.querySelector('.'+colName);
                 //if target column is residents display button, or text info
