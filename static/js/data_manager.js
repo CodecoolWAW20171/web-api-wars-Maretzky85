@@ -7,11 +7,33 @@ let dataManager = {
     residentDetails: ['Name','Height', 'Mass', 'Skin color', 'Hair color', 'Eye color', 'Birth year', 'Gender'],
 
     getData: function(request, callback){
+        try {
+            let waitBox = document.getElementById('initialWaitBox');
+            waitBox.innerHTML += '<br><br>Request sent, waiting for response'
+        } catch (err) {
+            
+        }
         xhttp.open("GET", request, true);
         xhttp.send();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 callback(JSON.parse(xhttp.responseText))
+            }
+            if (this.readyState == 4 && this.status != 200){
+                try {
+                    document.getElementById('initialWaitBox').innerHTML = 'Something went wrong, please reload'
+                } catch (error) {
+                    try {
+                        document.getElementById('msgBox').innerHTML = 'Something went wrong, please reload'
+                    } catch (error) {
+                        try {
+                            document.getElementById('modalMsgBox').innerHTML = 'Something went wrong, please reload'
+                        } catch (error) {
+                            
+                        }
+                    }   
+                }
+
             }
         };
     },
