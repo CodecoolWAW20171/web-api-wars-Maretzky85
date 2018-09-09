@@ -11,6 +11,20 @@ def mainpage():
     return render_template("main.html")
 
 
+@app.route('/add_vote/<vote_data>')
+def add_vote(vote_data):
+    data = json.loads(vote_data)
+    planet_name = data['planetName']
+    planet_id = data['planetId']
+    user_name = data['userName']
+    user_id = data_manager.get_user_data_from_db(user_name)['id']
+    if not data_manager.check_voted(planet_id, user_id):
+        data_manager.add_vote(planet_id, planet_name, user_id)
+        return json.dumps('Voted')
+    else:
+        return json.dumps('Already Voted ({})'.format(data_manager.check_voted(planet_id, user_id)))
+
+
 @app.route("/session")
 def check_active_session():
     if 'username' in session:

@@ -10,7 +10,7 @@ def get_user_data_from_db(cursor, username):
         where user_name = %(username)s;
         """, {"username": username})
     data = cursor.fetchall()
-    if len(data) > 0:
+    if data:
         return data[0]
     else:
         return False
@@ -24,7 +24,7 @@ def check_if_username_exists_in_db(cursor, username):
         where user_name = %(username)s;
         """, {"username": username})
     data = cursor.fetchall()
-    if len(data) > 0:
+    if data:
         return True
     else:
         return False
@@ -40,3 +40,30 @@ def add_new_user_to_db(cursor, username, password):
         (%(username)s,%(password)s)
         """, {"username": username, "password": password})
     return True
+
+
+@connection_handler.connection_handler
+def check_voted(cursor, planet_id, user_id):
+    cursor.execute(
+        """
+        SELECT * FROM planet_votes
+        WHERE planet_id = %(planet_id)s
+        AND user_id = %(user_id)s
+        """, {'planet_id': planet_id, 'user_id': user_id}
+    )
+    data = cursor.fetchall()
+    if data:
+        return data[0]['submission_time']
+    else:
+        return False
+
+
+@connection_handler.connection_handler
+def add_vote(cursor, planet_id, planet_name, user_id):
+    cursor.execute(
+        """
+        INSERT INTO planet_votes
+        (planet_id, planet_name, user_id)
+        VALUES (%(planet_id)s, %(planet_name)s, %(user_id)s)
+        """, {"planet_id": planet_id, "planet_name": planet_name, "user_id": user_id}
+    )

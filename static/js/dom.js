@@ -55,7 +55,8 @@ let dom = {
                 let targetRow = e.target.parentNode.parentNode;
                 let planetName = targetRow.firstChild.innerText;
                 let planetId = targetRow.dataset.planetId;
-                console.log(planetName, planetId)
+                clickedVoteButton = e.target;
+                vote.sendVote(planetName, planetId, userName);
             }
         })
         

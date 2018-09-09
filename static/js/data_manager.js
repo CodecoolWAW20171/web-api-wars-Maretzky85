@@ -5,6 +5,8 @@ let requestNr = 0;
 let itemsToLoad = 0;
 let ongoingRegisterStatus = 0;
 let session = 0;
+let userName = '';
+let clickedVoteButton = '';
 let dataManager = {
     tableClasses: ['name', 'diameter', 'climate', 'terrain', 'surface_water', 'population', 'residents'],
     tableFullNames: ['Name', 'Diameter', 'Climate', 'Terrain', 'Surface Water Percentage', 'Population', 'Residents'],
@@ -15,6 +17,7 @@ let dataManager = {
     sessionResponseCheck: function(response){
         if (response != "error"){
             session = 1;
+            userName = response
             let loggedUserName = document.getElementById('loggedUserName');
             loggedUserName.style.display = '';
             loggedUserName.innerText = 'Logged as '+response;
@@ -267,5 +270,31 @@ let register = {
             registerMsgBox.innerText = 'Something went wrong, please reload';
             ongoingRegisterStatus = 0;
         }
+    },
+};
+let vote = {
+    sendVote: function(planetName, planetId, userName){
+        let msgBox = document.getElementById('msgBox')
+        msgBox.innerHTML = '<h4>sending vote</h4>';
+        clickedVoteButton.innerText = 'Sent'
+        let voteData = {
+            planetName: planetName,
+            planetId: planetId,
+            userName: userName
+        };
+        dataManager.getData('/add_vote/'+JSON.stringify(voteData), vote.checkStatus)
+    },
+    checkStatus: function(response){
+        let msgBox = document.getElementById('msgBox')
+        if(response == "Voted"){
+            clickedVoteButton.classList.remove('btn-outline-secondary')
+            clickedVoteButton.classList.add('btn-success')
+            msgBox.style.color = 'green'
+        }
+        msgBox.innerHTML = '<h4>'+response+'</h4>';
+        setTimeout(()=>{
+            msgBox.style.color = '';
+            msgBox.innerHTML = '';
+        }, 3000)
     },
 }
