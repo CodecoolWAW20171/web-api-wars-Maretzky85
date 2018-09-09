@@ -292,10 +292,11 @@ let vote = {
             clickedVoteButton.classList.add('btn-success')
             msgBox.style.color = 'green'
         }else{
+            msgBox.style.color = 'red';
             clickedVoteButton.classList.remove('btn-outline-secondary')
             clickedVoteButton.classList.add('btn-outline-warning')
         }
-        msgBox.style.color = 'red';
+        
         msgBox.innerHTML = '<h4>'+response+'</h4>';
         setTimeout(()=>{
             msgBox.style.color = '';
