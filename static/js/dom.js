@@ -117,6 +117,7 @@ let dom = {
         modalTable.id = 'modalTable';
         modalTable.classList.add('table');
         modalTable.style.opacity = 0;
+        modalTable.style.display = 'none'
 
         let tableHeader = dataManager.createTableHeader(dataManager.residentDetails)
         modalTable.appendChild(tableHeader);
@@ -131,13 +132,14 @@ let dom = {
     showContentInModal: function(contentToAdd){
         if(document.getElementById('modalBody').children.length < 1){
             dom.drawTableInModal();
-            dom.fadeIn('modalTable');
         }
         let modalMsgBox = document.getElementById('modalMsgBox');
         modalMsgBox.innerHTML = "Loaded "+ loadedItems + " of " + itemsToLoad + " residents";
         
         if(loadedItems == itemsToLoad){
-            setTimeout(() => {modalMsgBox.innerHTML = "All data loaded";}, 1000);
+            setTimeout(() => {modalMsgBox.innerHTML = "All data loaded";
+            document.getElementById('modalTable').style.display = '';
+            dom.fadeIn('modalTable');}, 500);
             setTimeout(() => {dom.fadeOut('modalMsgBox')}, 2000);
             setTimeout(() => {dom.slowClose('modalMsgBox')},2200);
         };
@@ -211,7 +213,7 @@ let dom = {
             } else {
                 clearInterval(fadeEffect);
             }
-        }, 25);
+        }, 50);
     },
 
     showErrorMsg: function(){
