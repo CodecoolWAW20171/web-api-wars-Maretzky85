@@ -25,17 +25,24 @@ let dataManager = {
         dom.init();
     },
 
-    getData: function(request, callback){
+    getData: function(request, callback, cached = false){
         try {
             let waitBox = document.getElementById('initialWaitBox');
             waitBox.innerHTML = '<br>waiting for response'
         } catch (TypeError) {
-            
+        
+        }
+        if(cached == true){
+            console.log('cache')
+            if (sessionStorage.getItem(request)!=null){
+                callback(JSON.parse(sessionStorage.getItem(request)));
+                return}
         }
         xhttp.open("GET", request, true);
         xhttp.send();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
+                window.sessionStorage.setItem(request, xhttp.responseText);
                 callback(JSON.parse(xhttp.responseText))
             };
             if (this.readyState == 4 && this.status != 200){
@@ -63,13 +70,25 @@ let dataManager = {
         return planet
     },
 
-    loadArrayData: function(array, callback, checkParameter){
+    loadArrayData: function(array, callback, checkParameter, cached = false){
         if(requestNr != checkParameter){
             return;
         }
         itemsToLoad = array.length;
         if(loadedItems < itemsToLoad){
             if(loadingState == 0){
+                if(cached = true){
+                    if(sessionStorage.getItem(array[loadedItems]) != null){
+                        console.log(itemsToLoad, loadedItems)
+                        let data = sessionStorage.getItem(array[loadedItems])
+                        loadedItems=loadedItems+1;
+                        console.log(loadedItems)
+                        if(requestNr == checkParameter){
+                            callback(JSON.parse(data))
+                        }
+                        setTimeout(() => {dataManager.loadArrayData(array, callback, checkParameter)}, 300);
+                    }
+                }
                 xhttp.open("GET", array[loadedItems], true);
                 xhttp.send();
             }
@@ -78,6 +97,7 @@ let dataManager = {
                     loadingState = 0;
                     loadedItems++;
                     if(requestNr == checkParameter){
+                        sessionStorage.setItem(array[loadedItems], xhttp.responseText);
                         callback(JSON.parse(xhttp.responseText))
                     }
                 }if (this.readyState == 4 && this.status != 200){
@@ -143,7 +163,7 @@ let dataManager = {
             let loadingSign = document.createElement('h4');
             loadingSign.innerHTML = 'Please wait, loading data...';
             messageBox.appendChild(loadingSign);
-            dataManager.getData(targetButton.dataset.link, dom.showDataInTable);}
+            dataManager.getData(targetButton.dataset.link, dom.showDataInTable, cached = true);}
     },
 
     createTableHeader: function(headerArray){

@@ -1,7 +1,7 @@
 let dom = {
     init: function(){
         
-        dataManager.getData("https://swapi.co/api/planets/", dom.showDataInTable);
+        dataManager.getData("https://swapi.co/api/planets/", dom.showDataInTable, cached = true);
         
         let navbar = document.getElementById('navbar');
         navbar.removeAttribute('style');
@@ -15,7 +15,7 @@ let dom = {
                 let msgBox = document.getElementById('content');
                 msgBox.innerHTML = '<h1>Loading Data</h1>'
             }
-            dataManager.getData("https://swapi.co/api/planets/", dom.showDataInTable)
+            dataManager.getData("https://swapi.co/api/planets/", dom.showDataInTable, cached = true)
         });
 
         let navRegButton = document.getElementById('navRegisterButton')
