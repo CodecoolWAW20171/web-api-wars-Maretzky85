@@ -1,5 +1,6 @@
 let dom = {
-    init: function (){
+    init: function(){
+        
         dataManager.getData("https://swapi.co/api/planets/", dom.showDataInTable);
         
         let navbar = document.getElementById('navbar');
@@ -26,10 +27,15 @@ let dom = {
         loginButton.addEventListener('click', function(e){
             dataManager.getData('/login_page', dom.showLoginModal);
         });
+        let logOutButton = document.getElementById('navLogoutButton');
+        logOutButton.addEventListener('click', function(e){
+            let msgBox = document.getElementById('msgBox');
+            msgBox.innerHTML = '<h4>Logging out...</h4>';
+            dataManager.getData('/logout', dom.checkLogout);
+        })
     },
 
     showDataInTable: function(ObjectData) {
-        
         let contentTable = document.getElementById('content');
         //clear present content 
         contentTable.innerHTML = '';
@@ -253,9 +259,9 @@ let dom = {
         let modalTitle = document.getElementById('ModalTitle');
         modalTitle.innerHTML = "<h4>Login</h4>";
         
-        let registerMsgBox = document.createElement('div');
-        registerMsgBox.id = 'loginMsgBox';
-        modalTitle.appendChild(registerMsgBox);
+        let loginMsgBox = document.createElement('div');
+        loginMsgBox.id = 'loginMsgBox';
+        modalTitle.appendChild(loginMsgBox);
         
         let modalContent = document.getElementById('modalBody');
         modalContent.innerHTML = content;
@@ -275,10 +281,33 @@ let dom = {
             login: login,
             password: psw
         }
-        dataManager.getData("/login/"+JSON.stringify(loginData), dom.showResponse)
+        dataManager.getData("/login/"+JSON.stringify(loginData), dom.checkSuccessLogin)
     },
-    showResponse: function(response){
-        console.log(response)
+    
+    checkSuccessLogin: function(response){
+        let msgBox = document.getElementById('loginMsgBox');
+        if(response != "Error"){
+            msgBox.style.color = "green";
+            msgBox.innerText = "Success"
+            let navbarUserName = document.getElementById('loggedUserName');
+            navbarUserName.style.display = '';
+            navbarUserName.innerText = 'Signed in as '+document.getElementById('userName').value;
+            setTimeout(()=>{
+                $('#exampleModalLong').modal('hide')}, 1000
+            );
+            setTimeout(()=>{
+                location.reload();
+            }, 1200)
+        }else{
+            msgBox.style.color = "red";
+            msgBox.innerText = "Error"
+        }
+    },
+    checkLogout: function(response){
+        if(response == 'logged out'){
+        let msgBox = document.getElementById('msgBox');
+        msgBox.innerHTML = '<h4>Logged out</h4>';}
+        setTimeout(()=>{location.reload()}, 500)
     },
 
 }

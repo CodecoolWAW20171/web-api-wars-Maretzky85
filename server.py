@@ -11,6 +11,21 @@ def mainpage():
     return render_template("main.html")
 
 
+@app.route("/session")
+def check_active_session():
+    if 'username' in session:
+        username = session['username']
+        return json.dumps(username)
+    else:
+        return json.dumps("error")
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return json.dumps('logged Out')
+
+
 @app.route('/registration_page')
 def parse_register_form():
     return json.dumps(render_template("registration.html"))

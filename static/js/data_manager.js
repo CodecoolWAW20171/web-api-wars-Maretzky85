@@ -4,10 +4,23 @@ let loadedItems = 0;
 let requestNr = 0;
 let itemsToLoad = 0;
 let ongoingRegisterStatus = 0;
+let session = 0;
 let dataManager = {
     tableClasses: ['name', 'diameter', 'climate', 'terrain', 'surface_water', 'population', 'residents'],
     tableFullNames: ['Name', 'Diameter', 'Climate', 'Terrain', 'Surface Water Percentage', 'Population', 'Residents'],
     residentDetails: ['Name','Height', 'Mass', 'Skin color', 'Hair color', 'Eye color', 'Birth year', 'Gender'],
+    sessionCall: function(){
+        dataManager.getData("/session", dataManager.sessionResponseCheck);
+    },
+    sessionResponseCheck: function(response){
+        if (response != "error"){
+            session = 1;
+            let loggedUserName = document.getElementById('loggedUserName');
+            loggedUserName.style.display = '';
+            loggedUserName.innerText = 'Logged as '+response;
+        }
+        dom.init();
+    },
 
     getData: function(request, callback){
         try {
@@ -27,6 +40,7 @@ let dataManager = {
                 }
         };
     },
+
     planetDataFormatter: function(planetObject){
         let planet = JSON.parse(planetObject);
         let classNames = dataManager.tableClasses;
@@ -141,6 +155,9 @@ let dataManager = {
             col.innerText = name;
             headerRow.appendChild(col);
         });
+        if(session == 1){
+            let col = document.createElement('th');
+            headerRow.appendChild(col);}
         header.appendChild(headerRow);
         return header
 
@@ -155,12 +172,13 @@ let dataManager = {
             col.classList.add(name);
             row.appendChild(col);
         })
-        if(0==1){let btnTd = document.createElement('td');
-        let btn = document.createElement('button');
-        btn.classList.add('btn');
-        btn.innerText = "vote";
-        btnTd.appendChild(btn);
-        row.appendChild(btnTd);}
+        if(session == 1){
+            let btnTd = document.createElement('td');
+            let btn = document.createElement('button');
+            btn.classList.add('btn');
+            btn.innerText = "vote";
+            btnTd.appendChild(btn);
+            row.appendChild(btnTd);}
         return row
         },
 
