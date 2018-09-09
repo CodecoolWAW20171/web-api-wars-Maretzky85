@@ -25,7 +25,7 @@ let dataManager = {
     getData: function(request, callback){
         try {
             let waitBox = document.getElementById('initialWaitBox');
-            waitBox.innerHTML += '<br><br>Request sent, waiting for response'
+            waitBox.innerHTML = '<br>waiting for response'
         } catch (TypeError) {
             
         }
@@ -135,7 +135,6 @@ let dataManager = {
     buttonEvent: function(targetButton){
         document.querySelector('.nextButton').classList.add('disabled');
         document.querySelector('.previousButton').classList.add('disabled');
-        //show loading msg
         let messageBox = document.getElementById('msgBox');
         if(messageBox.children.length < 1){
             let loadingSign = document.createElement('h4');
@@ -149,13 +148,12 @@ let dataManager = {
         header.classList.add('thead-dark')
         let headerRow = document.createElement('tr')
         let colNames = headerArray;
-        //colNames.push('Vote');
         colNames.forEach(name => {
             let col = document.createElement('th');
             col.innerText = name;
             headerRow.appendChild(col);
         });
-        if(session == 1){
+        if(session == 1 && headerArray == dataManager.tableFullNames){
             let col = document.createElement('th');
             headerRow.appendChild(col);}
         header.appendChild(headerRow);
@@ -172,10 +170,11 @@ let dataManager = {
             col.classList.add(name);
             row.appendChild(col);
         })
-        if(session == 1){
+        if(session == 1 && tableClassArray == dataManager.tableClasses){
             let btnTd = document.createElement('td');
             let btn = document.createElement('button');
             btn.classList.add('btn');
+            btn.classList.add('btn-outline-secondary')
             btn.innerText = "vote";
             btnTd.appendChild(btn);
             row.appendChild(btnTd);}

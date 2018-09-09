@@ -23,10 +23,12 @@ let dom = {
             dataManager.getData('/registration_page', dom.showRegisterModal);
             
         });
+        
         let loginButton = document.getElementById('navSignInButton')
         loginButton.addEventListener('click', function(e){
             dataManager.getData('/login_page', dom.showLoginModal);
         });
+
         let logOutButton = document.getElementById('navLogoutButton');
         logOutButton.addEventListener('click', function(e){
             let msgBox = document.getElementById('msgBox');
