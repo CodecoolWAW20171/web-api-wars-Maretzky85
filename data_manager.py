@@ -70,9 +70,17 @@ def add_vote(cursor, planet_id, planet_name, user_id):
 
 
 @connection_handler.connection_handler
-def get_vote_data():
+def get_vote_data(cursor):
     cursor.execute(
         """
-        SELECT * FROM planet_votes
+        SELECT planet_name FROM planet_votes
         """
     )
+    raw_data = cursor.fetchall()
+    data = {}
+    for item in raw_data:
+        try:
+            data[item['planet_name']] = data[item['planet_name']]+1
+        except KeyError:
+            data[item['planet_name']] = 1
+    return data

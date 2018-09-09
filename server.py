@@ -11,6 +11,12 @@ def mainpage():
     return render_template("main.html")
 
 
+@app.route("/vote_details")
+def vote_statistic():
+    data_statistic = data_manager.get_vote_data()
+    return json.dumps(data_statistic, sort_keys=True)
+
+
 @app.route('/add_vote/<vote_data>')
 def add_vote(vote_data):
     data = json.loads(vote_data)
