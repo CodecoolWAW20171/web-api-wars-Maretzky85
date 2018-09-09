@@ -67,3 +67,12 @@ def add_vote(cursor, planet_id, planet_name, user_id):
         VALUES (%(planet_id)s, %(planet_name)s, %(user_id)s)
         """, {"planet_id": planet_id, "planet_name": planet_name, "user_id": user_id}
     )
+
+
+@connection_handler.connection_handler
+def get_vote_data():
+    cursor.execute(
+        """
+        SELECT * FROM planet_votes
+        """
+    )

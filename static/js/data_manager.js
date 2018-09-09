@@ -214,7 +214,7 @@ let register = {
         let registerMsgBox = document.getElementById('registerMsgBox');
         registerMsgBox.innerHTML = '';
         registerMsgBox.style.color = 'red';
-        let userName = document.getElementById('userName');
+        let RUserName = document.getElementById('userName');
         let psw = document.getElementById('psw');
         let pswR = document.getElementById('psw-r');
         if(psw.value != pswR.value){
@@ -227,12 +227,12 @@ let register = {
             ongoingRegisterStatus = 0;
             return
         }
-        if(userName.value.length < 5){
+        if(RUserName.value.length < 5){
             registerMsgBox.innerText = 'User name too short (min 5 signs)';
             ongoingRegisterStatus = 0;
             return
         };
-        register.checkIfUsernameExistsSend(userName.value)
+        register.checkIfUsernameExistsSend(RUserName.value)
     },
     checkIfUsernameExistsSend: function(username){
         ongoingRegisterStatus = 0;
@@ -249,8 +249,9 @@ let register = {
         }
     },
     registerNewUser: function(){
+        let RUserName = document.getElementById('userName')
         let formObject = {
-            userName: userName.value,
+            userName: RUserName.value,
             password: psw.value,
         };
         dataManager.getData("/register_new_user/"+JSON.stringify(formObject), register.checkStatus)
@@ -290,7 +291,11 @@ let vote = {
             clickedVoteButton.classList.remove('btn-outline-secondary')
             clickedVoteButton.classList.add('btn-success')
             msgBox.style.color = 'green'
+        }else{
+            clickedVoteButton.classList.remove('btn-outline-secondary')
+            clickedVoteButton.classList.add('btn-outline-warning')
         }
+        msgBox.style.color = 'red';
         msgBox.innerHTML = '<h4>'+response+'</h4>';
         setTimeout(()=>{
             msgBox.style.color = '';
