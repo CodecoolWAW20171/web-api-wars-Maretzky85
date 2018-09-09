@@ -269,7 +269,16 @@ let dom = {
         $('#exampleModalLong').modal();
     },
     loginModalLoginFunction: function(){
-        return
+        let login = document.getElementById('userName').value;
+        let psw = document.getElementById('psw').value;
+        let loginData = {
+            login: login,
+            password: psw
+        }
+        dataManager.getData("/login/"+JSON.stringify(loginData), dom.showResponse)
+    },
+    showResponse: function(response){
+        console.log(response)
     },
 
 }

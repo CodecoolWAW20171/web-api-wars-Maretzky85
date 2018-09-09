@@ -20,13 +20,28 @@ def parse_register_form():
 def parse_login_page():
     return json.dumps(render_template("login.html"))
 
-@app.route('/login')
-def check_login():
-    return
+
+def login(username):
+    session['username'] = username
+    return json.dumps('Logged as {}'.format(username))
+
+
+@app.route('/login/<json_data>')
+def check_login(json_data):
+    userdata = json.loads(json_data)
+    userdata_db = data_manager.get_user_data_from_db(userdata['login'])
+    if userdata_db:
+        if werkzeug.security.check_password_hash(userdata_db['password'], userdata['password']):
+            return json.dumps(login(userdata_db['user_name']))
+        else:
+            return json.dumps('Error')
+    else:
+        return json.dumps('Error')
+
 
 @app.route('/check_username/<username>')
 def check_username_in_db(username):
-    if len(data_manager.check_if_username_exists_in_db(username)) > 0:
+    if data_manager.check_if_username_exists_in_db(username):
         return json.dumps('exists')
     return json.dumps('ok')
 
@@ -47,6 +62,7 @@ def register_new_user_in_db(json_object):
 # def page_not_found(e):
 #     return render_template('404.html'), 404
 
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 if __name__ == '__main__':
     app.run(debug=True)
