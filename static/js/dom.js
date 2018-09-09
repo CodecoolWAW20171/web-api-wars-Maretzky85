@@ -17,11 +17,15 @@ let dom = {
             dataManager.getData("https://swapi.co/api/planets/", dom.showDataInTable)
         });
 
-        let regButton = document.getElementById('registerButton')
-        regButton.addEventListener('click', function(e){
-            dataManager.getData('/registration', dom.showRegisterModal);
+        let navRegButton = document.getElementById('navRegisterButton')
+        navRegButton.addEventListener('click', function(e){
+            dataManager.getData('/registration_page', dom.showRegisterModal);
             
-        })
+        });
+        let loginButton = document.getElementById('navSignInButton')
+        loginButton.addEventListener('click', function(e){
+            dataManager.getData('/login_page', dom.showLoginModal);
+        });
     },
 
     showDataInTable: function(ObjectData) {
@@ -145,7 +149,11 @@ let dom = {
     },
 
     slowClose: function(target){
-        var fadeTarget = document.getElementById(target);
+        try {
+            var fadeTarget = document.getElementById(target);
+        } catch (TypeError) {
+            return
+        }
         var fadeEffect = setInterval(function () {
             if (!fadeTarget.style.height) {
                 fadeTarget.style.height = fadeTarget.clientHeight+'px';
@@ -161,7 +169,11 @@ let dom = {
     },
 
     fadeOut: function(fadeTarget) {
-        var fadeTarget = document.getElementById(fadeTarget);
+        try {
+            var fadeTarget = document.getElementById(fadeTarget);    
+        } catch (TypeError) {
+            return
+        }
         var fadeEffect = setInterval(function () {
             if (!fadeTarget.style.opacity) {
                 fadeTarget.style.opacity = 1;
@@ -175,7 +187,11 @@ let dom = {
     },
 
     fadeIn: function(fadeTarget) {
-        var fadeTarget = document.getElementById(fadeTarget);
+        try {
+            var fadeTarget = document.getElementById(fadeTarget);    
+        } catch (TypeError) {
+            return
+        }
         var fadeEffect = setInterval(function () {
             if (!fadeTarget.style.opacity) {
                 console.log('opacity set to 0')
@@ -213,12 +229,47 @@ let dom = {
     showRegisterModal: function(content){
         let modalTitle = document.getElementById('ModalTitle');
         modalTitle.innerHTML = "<h4>Registration</h4>";
+        let registerMsgBox = document.createElement('div');
+        registerMsgBox.id = 'registerMsgBox';
+        modalTitle.appendChild(registerMsgBox);
         let modalContent = document.getElementById('modalBody');
         modalContent.innerHTML = content;
-        let saveButton = document.getElementById('saveButton')
-        saveButton.style.display = '';
-        $('#exampleModalLong').modal();
 
+        let saveButton = document.getElementById('saveButton');
+        saveButton.removeEventListener('click', dom.loginModalLoginFunction);
+        saveButton.addEventListener('click', dom.registerModalSaveFunction);
+        saveButton.innerText = 'Register';
+        saveButton.style.display = '';
+        
+        $('#exampleModalLong').modal();
+    },
+    registerModalSaveFunction: function(){
+        if(ongoingRegisterStatus == 0){
+            ongoingRegisterStatus = 1;
+            register.checkFormCorrectness()};
+    },
+
+    showLoginModal: function(content){
+        let modalTitle = document.getElementById('ModalTitle');
+        modalTitle.innerHTML = "<h4>Login</h4>";
+        
+        let registerMsgBox = document.createElement('div');
+        registerMsgBox.id = 'loginMsgBox';
+        modalTitle.appendChild(registerMsgBox);
+        
+        let modalContent = document.getElementById('modalBody');
+        modalContent.innerHTML = content;
+        
+        let loginButton = document.getElementById('saveButton')
+        loginButton.innerText = 'Login';
+        loginButton.style.display = '';
+        loginButton.removeEventListener('click', dom.registerModalSaveFunction);
+        loginButton.addEventListener('click', dom.loginModalLoginFunction)
+        
+        $('#exampleModalLong').modal();
+    },
+    loginModalLoginFunction: function(){
+        return
     },
 
 }

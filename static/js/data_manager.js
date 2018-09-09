@@ -3,6 +3,7 @@ let loadingState = 0;
 let loadedItems = 0;
 let requestNr = 0;
 let itemsToLoad = 0;
+let ongoingRegisterStatus = 0;
 let dataManager = {
     tableClasses: ['name', 'diameter', 'climate', 'terrain', 'surface_water', 'population', 'residents'],
     tableFullNames: ['Name', 'Diameter', 'Climate', 'Terrain', 'Surface Water Percentage', 'Population', 'Residents'],
@@ -180,5 +181,74 @@ let dataManager = {
                             
         })
         return btn;
+    },
+
+    
+    checkResponse: function(response){
+        console.log('response: '+response);
+    },
+};
+let register = {
+    checkFormCorrectness: function(){
+        ongoingRegisterStatus = 1;
+        let registerMsgBox = document.getElementById('registerMsgBox');
+        registerMsgBox.innerHTML = '';
+        registerMsgBox.style.color = 'red';
+        let userName = document.getElementById('userName');
+        let psw = document.getElementById('psw');
+        let pswR = document.getElementById('psw-r');
+        if(psw.value != pswR.value){
+            registerMsgBox.innerText = 'Password fields not match'
+            ongoingRegisterStatus = 0;
+            return
+        };
+        if(psw.value < 5){
+            registerMsgBox.innerText = 'Password too short (min 5 signs)';
+            ongoingRegisterStatus = 0;
+            return
+        }
+        if(userName.value.length < 5){
+            registerMsgBox.innerText = 'User name too short (min 5 signs)';
+            ongoingRegisterStatus = 0;
+            return
+        };
+        register.checkIfUsernameExistsSend(userName.value)
+    },
+    checkIfUsernameExistsSend: function(username){
+        ongoingRegisterStatus = 0;
+        dataManager.getData('/check_username/'+username, register.checkIfUsernameExistsRecive)
+    },
+    checkIfUsernameExistsRecive: function(response){
+        if(response=='ok'){
+            register.registerNewUser()
+        }else{
+            let registerMsgBox = document.getElementById('registerMsgBox');
+            registerMsgBox.innerText = 'User name taken';
+            ongoingRegisterStatus = 0;
+            return
+        }
+    },
+    registerNewUser: function(){
+        let formObject = {
+            userName: userName.value,
+            password: psw.value,
+        };
+        dataManager.getData("/register_new_user/"+JSON.stringify(formObject), register.checkStatus)
+    },
+    checkStatus: function(response){
+        let registerMsgBox = document.getElementById('registerMsgBox');
+        if (response == 'ok'){
+            registerMsgBox.style.color = 'green';
+            registerMsgBox.innerText = 'Registered';
+            setTimeout(()=>{
+                $('#exampleModalLong').modal('hide');
+                ongoingRegisterStatus = 0;
+                let saveButton = document.getElementById('saveButton');
+                saveButton.removeEventListener('click',dom.registerModalSaveFunction)
+            },1500)
+        }else{
+            registerMsgBox.innerText = 'Something went wrong, please reload';
+            ongoingRegisterStatus = 0;
+        }
     },
 }
