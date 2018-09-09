@@ -34,7 +34,7 @@ let dom = {
             let msgBox = document.getElementById('msgBox');
             msgBox.innerHTML = '<h4>Logging out...</h4>';
             dataManager.getData('/logout', dom.checkLogout);
-        })
+        });
     },
 
     showDataInTable: function(ObjectData) {
@@ -49,7 +49,15 @@ let dom = {
         //create table element
         let table = document.createElement('table');
         table.classList.add('table')
-        table.id = 'planetTable'
+        table.id = 'planetTable';
+        table.addEventListener('click', function(e){
+            if(e.target.className == 'btn btn-outline-secondary'){
+                let targetRow = e.target.parentNode.parentNode;
+                let planetName = targetRow.firstChild.innerText;
+                let planetId = targetRow.dataset.planetId;
+                console.log(planetName, planetId)
+            }
+        })
         
         //create headers and append to table
         let header = dataManager.createTableHeader(dataManager.tableFullNames);
@@ -61,12 +69,14 @@ let dom = {
 
         //for each entry create a row filled with data
         planets.forEach(planet => {
+            let planetId = planet.url.replace( /[^\d.]/g, '' ).replace(/\./g,'');
             let planetTable = document.getElementById('planetTable');
             //format data to display
             planet = dataManager.planetDataFormatter(JSON.stringify(planet));
             
             //create data-row
             let row = dataManager.createTableRow(dataManager.tableClasses);
+            row.dataset.planetId = planetId
             
             //enter data for each column
             dataManager.tableClasses.forEach(colName => {
