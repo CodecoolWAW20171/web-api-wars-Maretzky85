@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
+import json
 
 app = Flask(__name__)
 
@@ -6,6 +7,11 @@ app = Flask(__name__)
 @app.route("/")
 def mainpage():
     return render_template("main.html")
+
+
+@app.route('/registration')
+def register_new_user():
+    return json.dumps(render_template("registration.html"))
 
 
 # @app.errorhandler(404)

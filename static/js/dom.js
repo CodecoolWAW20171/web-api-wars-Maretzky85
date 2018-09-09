@@ -1,5 +1,31 @@
 let dom = {
-    showDataInTable: function (ObjectData) {
+    init: function (){
+        dataManager.getData("https://swapi.co/api/planets/", dom.showDataInTable);
+        
+        let navbar = document.getElementById('navbar');
+        navbar.removeAttribute('style');
+        
+        let planetListButton = document.getElementById('planetList');
+        planetListButton.addEventListener('click', function(e){
+            try {
+                let msgBox = document.getElementById('msgBox');
+                msgBox.innerHTML = "<h4>Please wait, loading data...</h4>"
+            } catch (TypeError) {
+                let msgBox = document.getElementById('content');
+                msgBox.innerHTML = '<h1>Loading Data</h1>'
+            }
+            dataManager.getData("https://swapi.co/api/planets/", dom.showDataInTable)
+        });
+
+        let regButton = document.getElementById('registerButton')
+        regButton.addEventListener('click', function(e){
+            dataManager.getData('/registration', dom.showRegisterModal);
+            
+        })
+    },
+
+    showDataInTable: function(ObjectData) {
+        
         let contentTable = document.getElementById('content');
         //clear present content 
         contentTable.innerHTML = '';
@@ -20,7 +46,7 @@ let dom = {
         contentTable.appendChild(table);
         //extract planet objects from results
         let planets = ObjectData.results;
-        
+
         //for each entry create a row filled with data
         planets.forEach(planet => {
             let planetTable = document.getElementById('planetTable');
@@ -51,8 +77,11 @@ let dom = {
                 //append row to table
                 planetTable.appendChild(row);}
             });
+        let navbar = document.getElementById('navbar');
+        navbar.removeAttribute('style');
         })
     },
+
     prepareModalWindow: function(planetName){
         let modalTitle = document.getElementById('ModalTitle');
         modalTitle.innerHTML = "Residents of "+planetName;
@@ -65,6 +94,9 @@ let dom = {
         
         let modalBody = document.getElementById('modalBody');
         modalBody.innerHTML = '';
+
+        let saveButton = document.getElementById('saveButton');
+        saveButton.style.display = 'none'
     },
 
     drawTableInModal: function(){
@@ -177,4 +209,16 @@ let dom = {
             }
         }
     },
+    
+    showRegisterModal: function(content){
+        let modalTitle = document.getElementById('ModalTitle');
+        modalTitle.innerHTML = "<h4>Registration</h4>";
+        let modalContent = document.getElementById('modalBody');
+        modalContent.innerHTML = content;
+        let saveButton = document.getElementById('saveButton')
+        saveButton.style.display = '';
+        $('#exampleModalLong').modal();
+
+    },
+
 }
