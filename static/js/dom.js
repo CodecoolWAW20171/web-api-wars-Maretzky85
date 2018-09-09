@@ -35,6 +35,13 @@ let dom = {
             msgBox.innerHTML = '<h4>Logging out...</h4>';
             dataManager.getData('/logout', dom.checkLogout);
         });
+        
+        let navVoteStat = document.getElementById('navVoteDetails');
+        navVoteStat.addEventListener('click', function(e){
+            dataManager.getData('/vote_details', dom.showVoteDetailsModal);
+        });
+
+        
     },
 
     showDataInTable: function(ObjectData) {
@@ -324,5 +331,42 @@ let dom = {
         msgBox.innerHTML = '<h4>Logged out</h4>';}
         setTimeout(()=>{location.reload()}, 500)
     },
+    showVoteDetailsModal: function(response){
+        let primaryBtn = document.getElementById('saveButton')
+        primaryBtn.style.display = 'none'
+        let modalTitle = document.getElementById('ModalTitle');
+        modalTitle.innerText = 'Voting Data';
+        
+        let modalBody = document.getElementById('modalBody');
+        modalBody.innerHTML = ''
+        
+        let voteTable = document.createElement('table');
+        voteTable.classList.add('table');
+        let thead = document.createElement('thead');
+        let trow = document.createElement('tr');
+        let tcol1 = document.createElement('th');
+        let tcol2 = document.createElement('th')
+        tcol1.innerHTML = 'Planet Name';
+        trow.appendChild(tcol1);
+        tcol2.innerHTML = 'Vote Count';
+        trow.appendChild(tcol2);
+        thead.appendChild(trow);
+        voteTable.appendChild(thead);
+
+        let tbody = document.createElement('tbody');
+        Object.entries(response).forEach(planetName =>{
+            let row = document.createElement('tr');
+            let col1 = document.createElement('td');
+            let col2 = document.createElement('td');
+            col1.innerText = planetName[0];
+            row.appendChild(col1);
+            col2.innerText = planetName[1];
+            row.appendChild(col2);
+            tbody.appendChild(row);
+        });
+        voteTable.appendChild(tbody);
+        modalBody.appendChild(voteTable)
+        $('#exampleModalLong').modal()
+    }
 
 }
