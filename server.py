@@ -23,7 +23,7 @@ def check_active_session():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    return json.dumps('logged Out')
+    return json.dumps('logged out')
 
 
 @app.route('/registration_page')
