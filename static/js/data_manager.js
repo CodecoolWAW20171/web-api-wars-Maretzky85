@@ -70,23 +70,20 @@ let dataManager = {
         return planet
     },
 
-    loadArrayData: function(array, callback, checkParameter, cached = false){
+    loadArrayData: function(array, callback, checkParameter, cached = true){
         if(requestNr != checkParameter){
             return;
         }
         itemsToLoad = array.length;
         if(loadedItems < itemsToLoad){
             if(loadingState == 0){
-                if(cached = true){
+                if(cached == true){
                     if(sessionStorage.getItem(array[loadedItems]) != null){
-                        console.log(itemsToLoad, loadedItems)
-                        let data = sessionStorage.getItem(array[loadedItems])
-                        loadedItems=loadedItems+1;
-                        console.log(loadedItems)
-                        if(requestNr == checkParameter){
-                            callback(JSON.parse(data))
-                        }
-                        setTimeout(() => {dataManager.loadArrayData(array, callback, checkParameter)}, 300);
+                        data = sessionStorage.getItem(array[loadedItems]);
+                        loadedItems++;
+                        callback(JSON.parse(data));
+                        dataManager.loadArrayData(array, callback, checkParameter);
+                        return
                     }
                 }
                 xhttp.open("GET", array[loadedItems], true);
@@ -95,9 +92,10 @@ let dataManager = {
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     loadingState = 0;
+                    sessionStorage.setItem(array[loadedItems], xhttp.responseText);
                     loadedItems++;
                     if(requestNr == checkParameter){
-                        sessionStorage.setItem(array[loadedItems], xhttp.responseText);
+                        
                         callback(JSON.parse(xhttp.responseText))
                     }
                 }if (this.readyState == 4 && this.status != 200){
