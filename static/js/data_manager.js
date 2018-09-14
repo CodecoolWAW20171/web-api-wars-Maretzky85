@@ -292,6 +292,23 @@ let register = {
     },
 };
 let vote = {
+    checkUserVotes: function(){
+        dataManager.getData('/check_user_votes/'+userName, vote.checkVoteResponse)
+    },
+
+    checkVoteResponse: function(response){
+        voteButtons = document.querySelectorAll('.btn-outline-secondary');
+        voteButtons.forEach(button =>{
+            let targetRow = button.parentNode.parentNode;
+            let planetName = targetRow.firstChild.innerText;
+            if(response.includes(planetName)){
+                button.classList.remove('btn-outline-secondary');
+                button.classList.add('btn-outline-warning');
+                button.innerText = 'Voted';
+            }
+        })
+    },
+
     sendVote: function(planetName, planetId, userName){
         let msgBox = document.getElementById('msgBox')
         msgBox.innerHTML = '<h4>sending vote</h4>';
@@ -303,6 +320,7 @@ let vote = {
         };
         dataManager.getData('/add_vote/'+JSON.stringify(voteData), vote.checkStatus)
     },
+
     checkStatus: function(response){
         let msgBox = document.getElementById('msgBox')
         if(response == "Voted"){

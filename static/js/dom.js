@@ -107,6 +107,9 @@ let dom = {
                 //append row to table
                 planetTable.appendChild(row);}
             });
+        if (userName != ''){
+            vote.checkUserVotes();
+        }
         let navbar = document.getElementById('navbar');
         navbar.removeAttribute('style');
         })
@@ -135,7 +138,8 @@ let dom = {
         modalTable.id = 'modalTable';
         modalTable.classList.add('table');
         modalTable.style.opacity = 0;
-        modalTable.style.display = 'none'
+        //modalTable.style.display = 'none'
+        
 
         let tableHeader = dataManager.createTableHeader(dataManager.residentDetails)
         modalTable.appendChild(tableHeader);
@@ -153,11 +157,11 @@ let dom = {
         }
         let modalMsgBox = document.getElementById('modalMsgBox');
         modalMsgBox.innerHTML = "Loaded "+ loadedItems + " of " + itemsToLoad + " residents";
-        
+        dom.fadeIn('modalTable');
         if(loadedItems == itemsToLoad){
             setTimeout(() => {modalMsgBox.innerHTML = "All data loaded";
             document.getElementById('modalTable').style.display = '';
-            dom.fadeIn('modalTable');}, 500);
+            }, 500);
             setTimeout(() => {dom.fadeOut('modalMsgBox')}, 2000);
             setTimeout(() => {dom.slowClose('modalMsgBox')},2200);
         };

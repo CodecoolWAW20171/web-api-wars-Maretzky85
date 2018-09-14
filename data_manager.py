@@ -84,3 +84,20 @@ def get_vote_data(cursor):
         except KeyError:
             data[item['planet_name']] = 1
     return data
+
+
+@connection_handler.connection_handler
+def get_user_vote_data(cursor, username):
+    cursor.execute(
+        """
+        SELECT planet_name FROM planet_votes
+        JOIN users_table ON (planet_votes.user_id = users_table.id)
+        WHERE user_name = %(username)s
+
+        """, {'username': username}
+    )
+    raw_data = cursor.fetchall()
+    data = []
+    for item in raw_data:
+        data.append(item['planet_name'])
+    return data

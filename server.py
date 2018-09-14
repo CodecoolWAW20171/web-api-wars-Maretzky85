@@ -92,6 +92,10 @@ def register_new_user_in_db(json_object):
     else:
         return json.dumps('warning')
 
+@app.route('/check_user_votes/<username>')
+def check_user_votes_view(username):
+    return json.dumps(data_manager.get_user_vote_data(username))
+
 
 # @app.errorhandler(404)
 # def page_not_found(e):
