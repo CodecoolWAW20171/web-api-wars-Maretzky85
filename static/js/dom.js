@@ -19,22 +19,34 @@ let dom = {
         });
 
         let navRegButton = document.getElementById('navRegisterButton')
-        navRegButton.addEventListener('click', function(e){
-            dataManager.getData('/registration_page', dom.showRegisterModal);
-            
-        });
+        if (userName != ''){
+            navRegButton.style.display = 'none';
+        }else{
+            navRegButton.addEventListener('click', function(e){
+                dataManager.getData('/registration_page', dom.showRegisterModal);
+                
+            })
+        };
         
         let loginButton = document.getElementById('navSignInButton')
-        loginButton.addEventListener('click', function(e){
-            dataManager.getData('/login_page', dom.showLoginModal);
-        });
+        if (userName != ''){
+            loginButton.style.display = 'none';
+        }else{
+            loginButton.addEventListener('click', function(e){
+                dataManager.getData('/login_page', dom.showLoginModal);
+            })
+        };
 
         let logOutButton = document.getElementById('navLogoutButton');
-        logOutButton.addEventListener('click', function(e){
-            let msgBox = document.getElementById('msgBox');
-            msgBox.innerHTML = '<h4>Logging out...</h4>';
-            dataManager.getData('/logout', dom.checkLogout);
-        });
+        if (userName != ''){
+            logOutButton.addEventListener('click', function(e){
+                let msgBox = document.getElementById('msgBox');
+                msgBox.innerHTML = '<h4>Logging out...</h4>';
+                dataManager.getData('/logout', dom.checkLogout);
+            });
+        }else{
+            logOutButton.style.display = 'none';
+        }
         
         let navVoteStat = document.getElementById('navVoteDetails');
         navVoteStat.addEventListener('click', function(e){
