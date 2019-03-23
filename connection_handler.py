@@ -11,7 +11,7 @@ def get_connection_string():
     config.read('db_config')
     user_name = config['POSTGRESQL']['user_name']
     password = config['POSTGRESQL']['password']
-    host = [host]
+    host = config['POSTGRESQL']['host']
     database_name = config['POSTGRESQL']['database_name']
 
     env_variables_defined = user_name and password and host and database_name
