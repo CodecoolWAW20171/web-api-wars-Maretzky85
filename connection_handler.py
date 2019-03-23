@@ -3,15 +3,16 @@
 import os
 import psycopg2
 import psycopg2.extras
+import configparser
 
 
 def get_connection_string():
-    # setup connection string
-    # to do this, please define these environment variables first
-    user_name = 'maro'
-    password = '!Qwerty&'
-    host = 'localhost'
-    database_name = 'star_wars_api'
+    config = configparser.ConfigParser()
+    config.read('db_config')
+    user_name = config['POSTGRESQL']['user_name']
+    password = config['POSTGRESQL']['password']
+    host = [host]
+    database_name = config['POSTGRESQL']['database_name']
 
     env_variables_defined = user_name and password and host and database_name
 
@@ -48,3 +49,5 @@ def connection_handler(function):
         connection.close()
         return ret_value
     return wrapper
+
+get_connection_string()
